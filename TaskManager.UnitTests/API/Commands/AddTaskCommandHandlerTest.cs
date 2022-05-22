@@ -30,7 +30,7 @@ namespace TaskManager.UnitTests.API.Commands
 
         #endregion
 
-        #region Add Task Test Cases
+        #region Add Task Command Test Cases
 
         [Fact]
         public void It_Should_Call_Service_AddNewTaskAsync_Method_When_AddTaskCommandHandler_Is_Called()

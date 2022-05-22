@@ -14,6 +14,7 @@ namespace TaskManager.API.Commands
     public class AddTaskCommandModel : IRequest<TaskResponse>, IValidatableObject
     {
         [Required]
+        [StringLength(50)]
         public string Id { get; set; }
 
         [Required]

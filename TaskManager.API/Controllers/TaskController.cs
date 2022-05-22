@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using TaskManager.API.Commands;
 using TaskManager.API.Exceptions;
+using TaskManager.API.Queries;
 
 namespace TaskManager.API.Controllers
 {
@@ -25,6 +26,32 @@ namespace TaskManager.API.Controllers
         {
             _mediator = mediator;
             _logger = logger;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        //[StringLength(50, ErrorMessage = "")]
+        public async Task<IActionResult> Get([FromQuery] RetrieveTaskQueryModel request)
+        {
+            try
+            {
+                var response = await _mediator.Send(request);
+                return Ok(response);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         /// <summary>
@@ -57,7 +84,7 @@ namespace TaskManager.API.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateTaskCommandModel request)
         {
             try
@@ -69,6 +96,31 @@ namespace TaskManager.API.Controllers
             {
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromQuery] DeleteTaskCommandModel request)
+        {
+            try
+            {
+                var response = await _mediator.Send(request);
+                return Ok(response);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
             catch (Exception ex)
             {

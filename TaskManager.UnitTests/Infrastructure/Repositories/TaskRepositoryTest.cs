@@ -95,6 +95,24 @@ namespace TaskManager.UnitTests.Infrastructure.Repositories
 
         [Theory]
         [MemberData(nameof(MockAddTaskData))]
+        public void It_Should_Return_Task_Details_Successfully_For_GetTaskByTaskId_Method(TaskData taskRequestData)
+        {
+            using (var mocktaskManagerDbContext = new TaskManagerDbContext(_dbContextOptions))
+            {
+                //Arrange
+                var taskRepository = new TaskRepository(_mockLogger.Object, mocktaskManagerDbContext);
+
+                //Act
+                var resonese = taskRepository.GetTaskByTaskId(taskRequestData.Id);
+
+                //Assert
+                Assert.NotNull(resonese);
+                Assert.Equal(taskRequestData.Id, resonese.Result.Id);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(MockAddTaskData))]
         public void It_Should_Insert_New_Task_Successfully_For_InserTaskDetails_Method(TaskData addTaskRequestData)
         {
             using (var mocktaskManagerDbContext = new TaskManagerDbContext(_dbContextOptions))
@@ -128,7 +146,7 @@ namespace TaskManager.UnitTests.Infrastructure.Repositories
 
         [Theory]
         [MemberData(nameof(MockAddTaskData))]
-        public void It_Should_Update_Task_Successfully_For_UpdateTaskDetails_Method(TaskData addTaskRequestData)
+        public void It_Should_Update_Task_Successfully_For_UpdateTaskDetails_Method(TaskData updateTaskRequestData)
         {
             using (var mocktaskManagerDbContext = new TaskManagerDbContext(_dbContextOptions))
             {
@@ -136,17 +154,17 @@ namespace TaskManager.UnitTests.Infrastructure.Repositories
                 var taskRepository = new TaskRepository(_mockLogger.Object, mocktaskManagerDbContext);
 
                 //Act
-                var resonese = taskRepository.UpdateTaskDetails(addTaskRequestData);
+                var resonese = taskRepository.UpdateTaskDetails(updateTaskRequestData);
 
                 //Assert
                 Assert.NotNull(resonese);
-                Assert.Equal(addTaskRequestData.Id, resonese.Result);
+                Assert.Equal(updateTaskRequestData.Id, resonese.Result);
             }
         }
 
         [Theory]
         [MemberData(nameof(MockAddTaskData))]
-        public void It_Should_Throw_Exception_In_Case_Of_Error_While_Updating_Existing_Task_For_UpdateTaskDetails_Method(TaskData addTaskRequestData)
+        public void It_Should_Throw_Exception_In_Case_Of_Error_While_Updating_Existing_Task_For_UpdateTaskDetails_Method(TaskData updateTaskRequestData)
         {
             //Arrange
             var mocktaskManagerDbContext = new Mock<TaskManagerDbContext>();
@@ -156,8 +174,62 @@ namespace TaskManager.UnitTests.Infrastructure.Repositories
             var taskRepository = new TaskRepository(_mockLogger.Object, mocktaskManagerDbContext.Object);
 
             //Assert
-            Assert.Throws<Exception>(() => taskRepository.UpdateTaskDetails(addTaskRequestData).Result);
+            Assert.Throws<Exception>(() => taskRepository.UpdateTaskDetails(updateTaskRequestData).Result);
         }
+
+        [Theory]
+        [MemberData(nameof(MockAddTaskData))]
+        public void It_Should_Delete_Task_Successfully_For_DeleteTaskById_Method(TaskData deleteTaskRequestData)
+        {
+            using (var mocktaskManagerDbContext = new TaskManagerDbContext(_dbContextOptions))
+            {
+                //Arrange
+                var taskRepository = new TaskRepository(_mockLogger.Object, mocktaskManagerDbContext);
+
+                //Act
+                var newTaskId = Guid.NewGuid().ToString();
+                deleteTaskRequestData.Id = newTaskId;
+                taskRepository.InserTaskDetails(deleteTaskRequestData);
+                var resonese = taskRepository.DeleteTaskById(newTaskId);
+
+                //Assert
+                Assert.NotNull(resonese);
+                Assert.True(resonese.Result);
+            }
+        }
+
+        [Fact]
+        public void It_Should_Return_False_If_Task_Not_Found_To_Delete_For_DeleteTaskById_Method()
+        {
+            using (var mocktaskManagerDbContext = new TaskManagerDbContext(_dbContextOptions))
+            {
+                //Arrange
+                var taskRepository = new TaskRepository(_mockLogger.Object, mocktaskManagerDbContext);
+
+                //Act
+                var resonese = taskRepository.DeleteTaskById(Guid.NewGuid().ToString());
+
+                //Assert
+                Assert.NotNull(resonese);
+                Assert.False(resonese.Result);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(MockAddTaskData))]
+        public void It_Should_Throw_Exception_In_Case_Of_Error_While_Deleting_Existing_Task_For_DeleteTaskById_Method(TaskData deleteTaskRequestData)
+        {
+            //Arrange
+            var mocktaskManagerDbContext = new Mock<TaskManagerDbContext>();
+            mocktaskManagerDbContext.Setup(x => x.SaveChanges()).Callback(() => throw new Exception());
+            mocktaskManagerDbContext.Setup(x => x.TaskDetails).Returns(DbContextMock.GetQueryableMockDbSet<TaskDetail>(TaskTestData.TaskDetailsDBList()));
+
+            var taskRepository = new TaskRepository(_mockLogger.Object, mocktaskManagerDbContext.Object);
+
+            //Assert
+            Assert.Throws<Exception>(() => taskRepository.DeleteTaskById(deleteTaskRequestData.Id).Result);
+        }
+
         #endregion
     }
 

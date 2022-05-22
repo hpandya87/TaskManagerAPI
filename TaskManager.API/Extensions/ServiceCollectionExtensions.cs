@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskManager.API.Commands;
 using TaskManager.API.Constants;
+using TaskManager.API.Queries;
 using TaskManager.API.Services;
 using TaskManager.Domain.Interfaces;
 using TaskManager.Infrastructure.DbContexts;
@@ -57,7 +58,9 @@ namespace TaskManager.API.Extensions
         public static IServiceCollection AddHandlers(this IServiceCollection services)
         {
             return services.AddMediatR(typeof(AddTaskCommandHandler))
-                .AddMediatR(typeof(UpdateTaskCommandHandler));
+                .AddMediatR(typeof(UpdateTaskCommandHandler))
+                .AddMediatR(typeof(RetrieveTaskQueryHandler))
+                .AddMediatR(typeof(DeleteTaskCommandHandler));
         }
     }
 }

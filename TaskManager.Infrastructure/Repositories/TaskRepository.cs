@@ -34,6 +34,22 @@ namespace TaskManager.Infrastructure.Repositories
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public Task<TaskDetail> GetTaskByTaskId(string id)
+        {
+            TaskDetail taskDetail = null;
+            var result = _taskManagerDbContext.TaskDetails.FirstOrDefault(x => x.Id == id);
+            if (result != null)
+            {
+                taskDetail = result;
+            }
+            return Task.FromResult(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dueDate"></param>
         /// <returns></returns>
         public int GetCountOfPendingTaskWithHighPriorityByDueDate(DateTime dueDate)
@@ -117,5 +133,32 @@ namespace TaskManager.Infrastructure.Repositories
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Task<bool> DeleteTaskById(string id)
+        {
+            try
+            {
+                var result = _taskManagerDbContext.TaskDetails.FirstOrDefault(x => x.Id == id);
+                if (result != null)
+                {
+                    _taskManagerDbContext.TaskDetails.Remove(result);
+                    _taskManagerDbContext.SaveChanges();
+                    return Task.FromResult(true);
+                }
+                else
+                    return Task.FromResult(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw ex;
+            }
+        }
+
     }
 }

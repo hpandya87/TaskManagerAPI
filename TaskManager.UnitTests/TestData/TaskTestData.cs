@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TaskManager.API.Commands;
 using TaskManager.API.Constants;
 using TaskManager.API.DTOs;
+using TaskManager.API.Queries;
 using TaskManager.Domain.CoreModels;
 using TaskManager.Domain.DBModels;
 
@@ -12,19 +13,25 @@ namespace TaskManager.UnitTests.TestData
     {
         public static AddTaskCommandModel AddTaskCommandData() =>
             new AddTaskCommandModel(
-                "101", "Task 101", "Sample Task 1", DateTime.Today.ToString(ApiConstants.DateFormat), DateTime.Today.ToString(ApiConstants.DateFormat), 
+                "101", "Task 101", "Sample Task 1", DateTime.Today.ToString(ApiConstants.DateFormat), DateTime.Today.ToString(ApiConstants.DateFormat),
                 DateTime.Today.ToString(ApiConstants.DateFormat), "Low", "New");
 
         public static UpdateTaskCommandModel UpdateTaskCommandData() =>
            new UpdateTaskCommandModel(
-               "101", "Task 101", "Sample Task 1", DateTime.Today.ToString(ApiConstants.DateFormat), DateTime.Today.ToString(ApiConstants.DateFormat), 
+               "101", "Task 101", "Sample Task 1", DateTime.Today.ToString(ApiConstants.DateFormat), DateTime.Today.ToString(ApiConstants.DateFormat),
                DateTime.Today.ToString(ApiConstants.DateFormat), "Low", "New");
+
+        public static RetrieveTaskQueryModel RetrieveTaskQueryData() =>
+           new RetrieveTaskQueryModel("101");
+
+        public static DeleteTaskCommandModel DeleteTaskCommandData() =>
+           new DeleteTaskCommandModel("101");
 
         public static TaskData TaskData() =>
             new TaskData("101", "Task 101", "Test Task", DateTime.Today.Date, DateTime.Today.Date, DateTime.Today.Date, "Low", "New");
 
         public static TaskResponse TaskResponseData() =>
-            new TaskResponse("101", "Success");
+            new TaskResponse("101", "Success", "Success");
 
         public static TaskDetail TaskDetailsDBData() =>
             new TaskDetail
