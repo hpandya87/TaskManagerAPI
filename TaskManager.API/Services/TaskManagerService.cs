@@ -38,9 +38,9 @@ namespace TaskManager.API.Services
                     taskDetail.Id,
                     taskDetail.Name,
                     taskDetail.Description,
-                    taskDetail.DueDate,
-                    taskDetail.StartDate,
-                    taskDetail.EndDate,
+                    taskDetail.DueDate.Date,
+                    taskDetail.StartDate.Date,
+                    taskDetail.EndDate.Date,
                     taskDetail.Priority,
                     taskDetail.Status
                 );
